@@ -1,0 +1,20 @@
+console.log(5*"5");
+console.log(5-"5");
+console.log(5*"talha");
+let number = 5;
+console.log(typeof number);
+let age = String(number);
+console.log(typeof age);
+
+let s_number = "55";
+console.log(typeof s_number);
+let marks = Number(s_number);
+let ages = parseInt(number);
+console.log(typeof ages)
+console.log(typeof marks);
+
+console.log(Boolean(5));
+console.log(Boolean(6));
+console.log(Boolean(16));
+console.log(Boolean(0));
+
