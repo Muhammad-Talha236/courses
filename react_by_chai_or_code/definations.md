@@ -1,7 +1,3 @@
-`<Layout>`{=html} `</Layout>`{=html} Bilkul! React mein sirf syntax
-nahi, **important concepts ke naam** bhi yaad hone chahiye. Interview
-aur job mein yehi terms use hoti hain. Tumne abhi tak jo padha hai, usme
-ye important concepts hain: ---
 
 # 1. Props ⭐⭐⭐⭐⭐
 
