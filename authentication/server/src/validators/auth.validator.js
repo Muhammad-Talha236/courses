@@ -47,3 +47,21 @@ export const registerSchema = z.object({
       'Password must not contain spaces'
     ),
 });
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email('Invalid email address')
+    .max(255, 'Email must not exceed 255 characters')
+    .regex(
+      /^[A-Za-z][A-Za-z0-9._%+-]*@/,
+      'Email must start with an alphabet'
+    ),
+
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .max(72, 'Password must not exceed 72 characters'),
+});
