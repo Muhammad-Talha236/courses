@@ -5,7 +5,7 @@ Objects are one of the most important concepts in JavaScript.
 Almost every JavaScript application uses objects, whether you're building a website, an API, a React application, or a Node.js backend.
 
 Understanding objects deeply will make learning React, APIs, JSON, and advanced JavaScript much easier.
-
+    
 ---
 
 # What is an Object?

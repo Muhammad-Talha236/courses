@@ -65,3 +65,130 @@ export const loginUser = async ({ email, password }) => {
     created_at: user.created_at,
   };
 };
+
+export const saveRefreshToken = async ({
+  userId,
+  tokenHash,
+  expiresAt,
+  familyId,
+}) => {
+  const result = await pool.query(
+    `
+     INSERT INTO refresh_tokens (
+  user_id,
+  token_hash,
+  expires_at,
+  family_id
+)
+VALUES ($1, $2, $3, $4)
+RETURNING id, user_id, expires_at, created_at, family_id
+    `,
+    [userId, tokenHash, expiresAt, familyId]
+  );
+
+  return result.rows[0];
+};
+
+export const findRefreshToken = async (tokenHash) => {
+  const result = await pool.query(
+    `
+      SELECT
+        id,
+        user_id,
+        token_hash,
+        expires_at,
+        revoked_at,
+        family_id
+      FROM refresh_tokens
+      WHERE token_hash = $1
+    `,
+    [tokenHash]
+  );
+
+  return result.rows[0];
+};
+
+export const validateRefreshToken = async (tokenHash) => {
+  const refreshToken = await findRefreshToken(tokenHash);
+
+  if (!refreshToken) {
+    const error = new Error('Invalid refresh token');
+    error.statusCode = 401;
+    error.code = 'TOKEN_NOT_FOUND';
+    throw error;
+  }
+
+  if (refreshToken.revoked_at) {
+    const error = new Error('Refresh token has been revoked');
+    error.statusCode = 401;
+    error.code = 'TOKEN_REVOKED';
+    error.familyId = refreshToken.family_id;
+    throw error;
+  }
+
+  if (new Date(refreshToken.expires_at) <= new Date()) {
+    const error = new Error('Refresh token has expired');
+    error.statusCode = 401;
+    error.code = 'TOKEN_EXPIRED';
+    throw error;
+  }
+
+  return refreshToken;
+};
+
+export const findUserById = async (userId) => {
+  const result = await pool.query(
+    `
+      SELECT
+        id,
+        name,
+        email,
+        role,
+        created_at
+      FROM users
+      WHERE id = $1
+    `,
+    [userId]
+  );
+
+  return result.rows[0];
+};
+
+export const revokeRefreshToken = async (tokenId) => {
+  const result = await pool.query(
+    `
+      UPDATE refresh_tokens
+      SET revoked_at = NOW()
+      WHERE id = $1
+        AND revoked_at IS NULL
+      RETURNING id, revoked_at
+    `,
+    [tokenId]
+  );
+
+  return result.rows[0];
+};
+
+export const revokeAllUserRefreshTokens = async (userId) => {
+  await pool.query(
+    `
+      UPDATE refresh_tokens
+      SET revoked_at = NOW()
+      WHERE user_id = $1
+        AND revoked_at IS NULL
+    `,
+    [userId]
+  );
+};
+
+export const revokeTokenFamily = async (familyId) => {
+  await pool.query(
+    `
+      UPDATE refresh_tokens
+      SET revoked_at = NOW()
+      WHERE family_id = $1
+        AND revoked_at IS NULL
+    `,
+    [familyId]
+  );
+};
