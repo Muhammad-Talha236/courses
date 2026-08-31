@@ -1,10 +1,13 @@
 import {useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 import api from '../api/client.js'
 function Login() {
 
   const [email,  setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [loading,setloading] = useState(false);
+  const [error,setError] = useState('');
+  const navigate = useNavigate();
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
 //     // Handle login logic here
@@ -14,6 +17,9 @@ function Login() {
 
 const handleLogin = async (event) => {
   event.preventDefault();
+  
+   setloading(true);
+   setError('');
 
   try {
     const response = await api.post('/auth/login', {
@@ -22,8 +28,11 @@ const handleLogin = async (event) => {
     });
 
     console.log(response.data);
+    navigate('/dashboard'); // Redirect to dashboard or any other page after successful login
   } catch (error) {
-    console.error(error);
+    setError('invalid credentials.');
+  }finally{
+    setloading(false);
   }
 };
 
@@ -72,12 +81,15 @@ const handleLogin = async (event) => {
               className="w-full border rounded-lg px-3 py-2"
             />
           </div>
-
+          {error&& (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
           <button
             type="submit"
             className="w-full rounded-lg px-4 py-2 font-semibold"
+            disabled={loading}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>
