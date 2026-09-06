@@ -1,6 +1,10 @@
 import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import api from '../api/client.js'
+
+import { useContext } from 'react';
+import AuthContext from '../context/AuthContext.jsx';
+
 function Login() {
 
   const [email,  setEmail] = useState('');
@@ -8,6 +12,7 @@ function Login() {
   const [loading,setloading] = useState(false);
   const [error,setError] = useState('');
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
 //     // Handle login logic here
@@ -26,7 +31,7 @@ const handleLogin = async (event) => {
       email,
       password,
     });
-
+    setUser(response.data.user);
     console.log(response.data);
     navigate('/dashboard'); // Redirect to dashboard or any other page after successful login
   } catch (error) {
