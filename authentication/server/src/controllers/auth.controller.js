@@ -141,6 +141,7 @@ export const refresh = async (req, res, next) => {
       data: {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
+        user,
       },
     });
   } catch (error) {
