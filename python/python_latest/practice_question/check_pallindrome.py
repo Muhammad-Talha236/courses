@@ -16,3 +16,5 @@ if(is_pallindrom):
     print("String is pallindrom "+name)
 else:
     print("string is not pallindrome "+name)
+
+
